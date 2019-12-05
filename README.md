@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
@@ -66,3 +67,7 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+=======
+# ShopAround
+Ecommerce website where sellers can show their products and customers can compare the products which are there in other e-commerce websites such as flipkart and amazon scrapping them using python library Scrapy
+>>>>>>> 929c1485ee2c3822831600be8ced9cc631c161c7
