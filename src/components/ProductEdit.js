@@ -6,8 +6,8 @@ import { compose } from "recompose";
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
 const GET_ALL_PROD = gql`
-  query getAllProd {
-    products {
+  query getAllProd($vid:Int!) {
+    products(where: { vendor: { vid: { _eq: $vid } } }) {
       pid
       productimglink
       productname
@@ -140,6 +140,18 @@ class ProductEdit extends Component {
 }
 
 export default compose(
-    graphql(GET_ALL_PROD,{name:"getall"}),
-    graphql(DELETE_PROD,{name:"DELETE_PROD"})
+  graphql(
+    GET_ALL_PROD,
+    { name: "getall" },
+    {
+      options: props => {
+        return {
+          variables: {
+            vid: props.vid
+          }
+        };
+      }
+    }
+  ),
+  graphql(DELETE_PROD, { name: "DELETE_PROD" })
 )(ProductEdit);

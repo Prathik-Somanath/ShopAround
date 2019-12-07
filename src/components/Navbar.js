@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import styled from 'styled-components';
-import { Menu, Icon, Layout } from 'antd'
+import { Menu, Icon, Layout, Button } from 'antd'
 import { Link } from 'react-router-dom'
 const {Header} = Layout
 // const SubMenu = Menu.SubMenu
@@ -54,12 +54,13 @@ class Navbar extends Component {
               STORE
             </Link>
           </Menu.Item>
-          <Menu.Item key="prodedit">
-            <Link to="/prodedit">
+          <Menu.Item key="cart">
+            <Link to="/cart">
               <Icon type="shopping-cart" />
               CART
             </Link>
           </Menu.Item>
+          
           <Menu.Item key="login" style={{ float: "right" }}>
             <Link to="/login">
               <Icon type="heart-o" />

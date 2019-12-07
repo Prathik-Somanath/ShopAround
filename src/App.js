@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { withRouter, Switch, Route } from 'react-router-dom'
-import { Layout } from 'antd'
+import { Layout, Button } from 'antd'
 import styled from 'styled-components';
 
 import Home from './components/Home'
 import ProdRegistration from './components/ProductRegistration'
 import Cart from './components/Cart'
+import ProdEdit from './components/ProductEdit'
 import Login from './components/Login'
 import Navbar from './components/Navbar'
 import CustomerRegistration from './components/CustomerRegistration'
@@ -44,6 +45,7 @@ const App = () => {
     <ApolloProvider client={client}>
       <Layout>
         <Navbar />
+
         {/* DECLARING REACT ROUTES */}
         <Switch>
           <Route
@@ -56,13 +58,19 @@ const App = () => {
           <Route
             path="/productregistration"
             render={() => {
-              return <ProdRegistration />;
+              return <ProdRegistration vid={localStorage.getItem("vid")} />;
+            }}
+          />
+          <Route
+            path="/cart"
+            render={() => {
+              return <Cart cusid={localStorage.getItem("cusid")} />;
             }}
           />
           <Route
             path="/prodedit"
             render={() => {
-              return <Cart cusid ={localStorage.getItem("cusid")}/>;
+              return <ProdEdit vid={localStorage.getItem("vid")} />;
             }}
           />
           <Route

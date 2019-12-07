@@ -34,30 +34,46 @@ const GET_ALL_PROD = gql`
     }
   }
 `;
+const GET_COST = gql`
+  query($cusid: uuid!) {
+    customer(where: { cusid: { _eq: $cusid } }) {
+      name
+      total_cost
+    }
+  }
+`;
 const DELETE_PROD = gql`
-  mutation deleteProd($pid: Int!) {
-    delete_products(where: { pid: { _eq: $pid } }) {
+  mutation deleteProd($pid: Int!, $cusid: uuid!) {
+    delete_cart(where: { cusid: { _eq: $cusid }, pid: { _eq: $pid } }) {
       affected_rows
-      returning {
-        productname
-        vendor {
-          vname
-        }
-      }
     }
   }
 `;
 class Cart extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { total_cost: '' };
+  }
+
   handleOnClick = id => e => {
     e.preventDefault();
     console.log("Product ID to be deleted:", id);
     this.props.DELETE_PROD({
       variables: {
-        pid: id
+        pid: id,
+        cusid: localStorage.getItem("cusid")
       },
       refetchQueries: [{ query: GET_ALL_PROD }]
     });
   };
+  displayCost(){
+    var data = this.props.GET_COST;
+    if (data.loading){
+      return <div>Loading....</div>
+    }else{
+    return data.customer.map(cus => {return (<div>{cus.name}'s TotalCost: ‎₹{cus.total_cost}</div>)})
+    }
+  }
   displayProducts() {
     var data = this.props.GET_ALL_PROD;
     // this.props.GET_ALL_PROD({
@@ -66,7 +82,7 @@ class Cart extends Component {
     //     }
     // });
     if (data.loading) {
-      return <div>Loading books...</div>;
+      return <div>Loading ....</div>;
     } else {
       return data.cart.map(cart => {
         return (
@@ -137,6 +153,7 @@ class Cart extends Component {
     console.log(this.props);
     return (
       <Content style={{ padding: "0 50px" }}>
+        <Row>{this.displayCost()}</Row>
         <Layout style={{ padding: "24px 0", background: "#fff" }}>
           <Content style={{ padding: "0 24px", minHeight: 280 }}>
             <div className="productScroll">
@@ -154,7 +171,20 @@ export default compose(
     GET_ALL_PROD,
     { name: "GET_ALL_PROD" },
     {
-      options:(props) => {
+      options: props => {
+        return {
+          variables: {
+            cusid: props.cusid
+          }
+        };
+      }
+    }
+  ),
+  graphql(
+    GET_COST,
+    { name: "GET_COST" },
+    {
+      options: props => {
         return {
           variables: {
             cusid: props.cusid

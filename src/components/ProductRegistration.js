@@ -5,8 +5,8 @@ import { graphql} from "react-apollo";
 import {compose} from "recompose";
 const { Option } = Select;
 const GET_ALL = gql`
-  query getAll {
-    vendor {
+  query getAll($vid: Int!) {
+    vendor(where:{vid:{_eq:$vid}}) {
       vid
       vname
     }
@@ -265,6 +265,18 @@ const ProdRegis = Form.create({ name: "ProdRegis" })(ProductRegistration);
 
 //export default graphql(GET_ALL)(ProdRegis);
 export default compose(
-  graphql(GET_ALL,{name:"getall"}),
-  graphql(ADD_PROD,{name:"ADD_PROD"})
-  )(ProdRegis);
+  graphql(
+    GET_ALL,
+    { name: "getall" },
+    {
+      options: props => {
+        return {
+          variables: {
+            vid: props.vid
+          }
+        };
+      }
+    }
+  ),
+  graphql(ADD_PROD, { name: "ADD_PROD" })
+)(ProdRegis);
