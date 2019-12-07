@@ -64,6 +64,7 @@ class RegistrationForm extends Component {
 
     return (
       <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+        <h1 align="middle">CUSTOMER REGISTRATION</h1>
         <Form.Item label={<span>Name</span>}>
           {getFieldDecorator("name", {
             rules: [

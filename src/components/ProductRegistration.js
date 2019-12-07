@@ -155,6 +155,7 @@ class ProductRegistration extends Component {
     };
     return (
       <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+        <h1 align="middle">PRODUCT REGISTRATION</h1>
         <Form.Item label={<span>Laptop's Name</span>}>
           {getFieldDecorator("name", {
             rules: [

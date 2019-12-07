@@ -1,17 +1,52 @@
 import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
 import { Form, Icon, Input, Button, Row, Card } from "antd";
+import gql from "graphql-tag";
+import { graphql } from "react-apollo";
+import _ from "lodash";
 import "./CSS/login.css";
+
+const GET_PASS = gql`
+  query {
+    vendor {
+      email
+      password
+      vid
+    }
+  }
+`;
+
+
 class VendorRegistration extends Component {
+  constructor(props) {
+    super(props);
+    let loggedIn = false;
+    this.state = {
+      loggedIn
+    };
+  }
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
+        var data = this.props.getpass;
+        var pass = _.find(data.vendor, { email: values.email });
+        if (values.password === pass.password) {
+          this.setState({
+            loggedIn: true
+          });
+          localStorage.setItem("vid", pass.vid);
+          console.log("Holla Amigo");
+        }
       }
     });
   };
 
   render() {
+    if (this.state.loggedIn) {
+      return <Redirect to="/productregistration" />;
+    }
     const { getFieldDecorator } = this.props.form;
 
     return (
@@ -21,12 +56,10 @@ class VendorRegistration extends Component {
             <Form.Item>
               {getFieldDecorator("email", {
                 rules: [
-                    {
-                        type: "email"
-                    },
-                    {   required: true, 
-                        message: "Please input your Email!" 
-                    }
+                  {
+                    type: "email"
+                  },
+                  { required: true, message: "Please input your Email!" }
                 ]
               })(
                 <Input
@@ -75,4 +108,4 @@ class VendorRegistration extends Component {
 const VenLoginForm = Form.create({ name: "normal_login" })(
   VendorRegistration
 );
-export default VenLoginForm;
+export default graphql(GET_PASS, { name: "getpass" })(VenLoginForm);

@@ -62,6 +62,7 @@ class RegistrationForm extends Component {
 
     return (
       <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+        <h1 align="middle">VENDOR REGISTRATION</h1>
         <Form.Item label={<span>Name</span>}>
           {getFieldDecorator("name", {
             rules: [
@@ -90,11 +91,7 @@ class RegistrationForm extends Component {
         <Form.Item label="Website">
           {getFieldDecorator("website", {
             rules: [{ required: true, message: "Please input website!" }]
-          })(
-       
-              <Input />
-           
-          )}
+          })(<Input />)}
         </Form.Item>
         <Form.Item label="Password" hasFeedback>
           {getFieldDecorator("password", {

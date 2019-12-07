@@ -2,11 +2,13 @@ import React, { Component } from 'react'
 import { Layout, Row, Menu, Col, Icon } from "antd";
 import gql from 'graphql-tag';
 import {graphql} from 'react-apollo'
-const { Header, Content, Sider } = Layout;
+import { compose } from 'recompose';
+const { Header, Content, Sider, Breadcrumb } = Layout;
 const { SubMenu } = Menu;
 const GET_ALL_PROD = gql`
   query getAllProd {
     products {
+      pid
       productimglink
       productname
       productprice
@@ -30,9 +32,31 @@ const GET_ALL_PROD = gql`
     }
   }
 `;
+const ADD_CART = gql`
+  mutation($cusid: uuid!, $pid: Int!) {
+    insert_cart(objects: [{ cusid: $cusid, pid: $pid }]) {
+      affected_rows
+      returning {
+        cusid
+      }
+    }
+  }
+`;
 class Home extends Component {
+  
+  handleOnClick = id => e => {
+    e.preventDefault();
+    console.log("Product ID to be added to cart:", id);
+    this.props.ADD_CART({
+      variables: {
+        cusid: localStorage.getItem("cusid"),
+        pid: id
+      }
+    });
+  };
+
   displayProducts() {
-    var data = this.props.data;
+    var data = this.props.getall;
     if (data.loading) {
       return <div>Loading books...</div>;
     } else {
@@ -63,8 +87,11 @@ class Home extends Component {
                         <a href={prod.producturl}>{prod.productname}</a>
                       </p>
                       <p>₹{prod.productprice}</p>
-                      <button style={{ float: "right" }}>
-                        <Icon type="delete" />
+                      <button
+                        onClick={this.handleOnClick(prod.pid)}
+                        style={{ float: "right" }}
+                      >
+                        <Icon type="plus-circle" />
                       </button>
                       <small>{prod.vendor.vurl}</small>
                     </div>
@@ -98,11 +125,11 @@ class Home extends Component {
   }
   render() {
     console.log(this.props);
+    console.log("CutomerID: ", localStorage.getItem("cusid"));
     return (
-
       <Content style={{ padding: "0 50px" }}>
         <Layout style={{ padding: "24px 0", background: "#fff" }}>
-          <Sider width={200} style={{ background: "#fff" }}>
+          {/* <Sider width={200} style={{ background: "#fff" }}>
             <Menu
               mode="inline"
               defaultSelectedKeys={["1"]}
@@ -152,8 +179,10 @@ class Home extends Component {
                 <Menu.Item key="12">option12</Menu.Item>
               </SubMenu>
             </Menu>
-          </Sider>
+          </Sider> */}
+
           <Content style={{ padding: "0 24px", minHeight: 280 }}>
+            <h1 align="middle">HOME</h1>
             <div className="productScroll">
               <Row gutter={[24, 24]}>{this.displayProducts()}</Row>
             </div>
@@ -165,4 +194,7 @@ class Home extends Component {
 };
 
 
-export default graphql(GET_ALL_PROD)(Home);
+export default compose( 
+  graphql(ADD_CART,{name:"ADD_CART"}),
+  graphql(GET_ALL_PROD,{name:"getall"})
+)(Home);

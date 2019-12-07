@@ -8,8 +8,10 @@ class Login extends Component {
     render() { 
         return (
           <Row>
-            <Col>
+            <Col span={12}>
               <CusLogin />
+            </Col>
+            <Col span={12}>
               <VenLogin />
             </Col>
           </Row>

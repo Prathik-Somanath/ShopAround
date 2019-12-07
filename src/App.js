@@ -5,9 +5,8 @@ import styled from 'styled-components';
 
 import Home from './components/Home'
 import ProdRegistration from './components/ProductRegistration'
-import Cart from './components/ProductEdit'
-import CustomerLogin from './components/CustomerLogin'
-import VendorLogin from './components/VendorLogin'
+import Cart from './components/Cart'
+import Login from './components/Login'
 import Navbar from './components/Navbar'
 import CustomerRegistration from './components/CustomerRegistration'
 import VendorRegistration from './components/VendorRegistration'
@@ -63,7 +62,7 @@ const App = () => {
           <Route
             path="/prodedit"
             render={() => {
-              return <Cart />;
+              return <Cart cusid ={localStorage.getItem("cusid")}/>;
             }}
           />
           <Route
@@ -79,15 +78,9 @@ const App = () => {
             }}
           />
           <Route
-            path="/vendorlogin"
+            path="/login"
             render={() => {
-              return <VendorLogin />;
-            }}
-          />
-          <Route
-            path="/customerlogin"
-            render={() => {
-              return <CustomerLogin />;
+              return <Login />;
             }}
           />
         </Switch>

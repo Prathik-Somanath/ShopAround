@@ -6,28 +6,30 @@ import { compose } from "recompose";
 const { Header, Content, Sider } = Layout;
 const { SubMenu } = Menu;
 const GET_ALL_PROD = gql`
-  query getAllProd {
-    products {
-      pid
-      productimglink
-      productname
-      productprice
-      producturl
-      brand {
-        brandname
-      }
-      vendor {
-        vurl
-        vname
-      }
-      cpu {
-        cname
-      }
-      gen {
-        genname
-      }
-      gpu {
-        gpuname
+  query($cusid: uuid!) {
+    cart(where: { cusid: { _eq: $cusid } }) {
+      product {
+        pid
+        productimglink
+        productname
+        productprice
+        producturl
+        brand {
+          brandname
+        }
+        vendor {
+          vurl
+          vname
+        }
+        cpu {
+          cname
+        }
+        gen {
+          genname
+        }
+        gpu {
+          gpuname
+        }
       }
     }
   }
@@ -45,24 +47,28 @@ const DELETE_PROD = gql`
     }
   }
 `;
-class ProductEdit extends Component {
-
-  handleOnClick = id => e =>{
-      e.preventDefault();
-      console.log("Product ID to be deleted:", id);
-      this.props.DELETE_PROD({
-          variables: {
-              pid: id
-          },
-          refetchQueries: [{query: GET_ALL_PROD}]
-      });
-  }  
+class Cart extends Component {
+  handleOnClick = id => e => {
+    e.preventDefault();
+    console.log("Product ID to be deleted:", id);
+    this.props.DELETE_PROD({
+      variables: {
+        pid: id
+      },
+      refetchQueries: [{ query: GET_ALL_PROD }]
+    });
+  };
   displayProducts() {
-    var data = this.props.getall;
+    var data = this.props.GET_ALL_PROD;
+    // this.props.GET_ALL_PROD({
+    //     variables: {
+    //         cusid: localStorage.getItem("cusid")
+    //     }
+    // });
     if (data.loading) {
       return <div>Loading books...</div>;
     } else {
-      return data.products.map(prod => {
+      return data.cart.map(cart => {
         return (
           <Row gutter={[24, 24]}>
             <Col span={24}>
@@ -74,25 +80,30 @@ class ProductEdit extends Component {
                         alt="example"
                         width="200px"
                         height="200px"
-                        src={prod.productimglink}
+                        src={cart.product.productimglink}
                       />
                     </figure>
                   </div>
                   <div class="media-content">
                     <div class="content">
                       <p>
-                        <strong>{prod.brand.brandname}</strong>{" "}
-                        <small>{prod.cpu.cname}</small>{" "}
-                        <small>{prod.gen.genname}</small>{" "}
-                        <small>{prod.gpu.gpuname}-VRAM</small>
+                        <strong>{cart.product.brand.brandname}</strong>{" "}
+                        <small>{cart.product.cpu.cname}</small>{" "}
+                        <small>{cart.product.gen.genname}</small>{" "}
+                        <small>{cart.product.gpu.gpuname}-VRAM</small>
                         <br />
-                        <a href={prod.producturl}>{prod.productname}</a>
+                        <a href={cart.product.producturl}>
+                          {cart.product.productname}
+                        </a>
                       </p>
-                      <p>₹{prod.productprice}</p>
-                      <button onClick={ this.handleOnClick(prod.pid)} style={{ float: "right" }}>
+                      <p>₹{cart.product.productprice}</p>
+                      <button
+                        onClick={this.handleOnClick(cart.product.pid)}
+                        style={{ float: "right" }}
+                      >
                         <Icon type="delete" />
                       </button>
-                      <small>{prod.vendor.vurl}</small>
+                      <small>{cart.product.vendor.vurl}</small>
                     </div>
                     <nav class="level is-mobile">
                       <div class="level-left">
@@ -128,7 +139,6 @@ class ProductEdit extends Component {
       <Content style={{ padding: "0 50px" }}>
         <Layout style={{ padding: "24px 0", background: "#fff" }}>
           <Content style={{ padding: "0 24px", minHeight: 280 }}>
-            <h1 align="middle">CART</h1>
             <div className="productScroll">
               <Row gutter={[24, 24]}>{this.displayProducts()}</Row>
             </div>
@@ -140,6 +150,18 @@ class ProductEdit extends Component {
 }
 
 export default compose(
-    graphql(GET_ALL_PROD,{name:"getall"}),
-    graphql(DELETE_PROD,{name:"DELETE_PROD"})
-)(ProductEdit);
+  graphql(
+    GET_ALL_PROD,
+    { name: "GET_ALL_PROD" },
+    {
+      options:(props) => {
+        return {
+          variables: {
+            cusid: props.cusid
+          }
+        };
+      }
+    }
+  ),
+  graphql(DELETE_PROD, { name: "DELETE_PROD" })
+)(Cart);
