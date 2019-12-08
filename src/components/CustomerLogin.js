@@ -44,6 +44,7 @@ class CustomerLogin extends Component {
 
   render() {
     if (this.state.loggedIn) {
+      alert("You Logged in as Customer!!");
       return <Redirect to="/" />;
     }
     const { getFieldDecorator } = this.props.form;

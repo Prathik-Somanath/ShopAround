@@ -1,10 +1,11 @@
 import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
 import { Layout, Row, Menu, Col, Icon } from "antd";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
 import { Link } from 'react-router-dom'
 import { compose } from "recompose";
-const { Header, Content, Sider, Form, InputNumber, Button } = Layout;
+const {  Content,Input, Button } = Layout;
 const { SubMenu } = Menu;
 const GET_ALL_PROD = gql`
   query getAllProd($vid:Int!) {
@@ -64,12 +65,27 @@ const UPDATE_PRICE = gql`
 `;
 
 class ProductEdit extends Component {
-  state = {
-    pid:'',
-    price:''
+  constructor(props) {
+    super(props);
+    const token = localStorage.getItem("vid");
+
+    let loggedIn = true;
+    if (token == null) {
+      loggedIn = false;
+    }
+    this.state = {
+      loggedIn,
+      pid: "",
+      price: ""
+    };
   }
+  // state = {
+  //   pid: "",
+  //   price: ""
+  // };
   handleOnClick = id => e => {
     e.preventDefault();
+    alert("Item Deleted");
     console.log("Product ID to be deleted:", id);
     this.props.DELETE_PROD({
       variables: {
@@ -79,23 +95,23 @@ class ProductEdit extends Component {
     });
   };
 
-  handleSubmit = ()=>{
-                       this.props.UPDATE_PRICE({
-                       variables: {
-                       pid: this.state.pid,
-                       price: this.state.price
-                       }
-                       });
-                     }
+  handleSubmit = () => {
+    this.props.UPDATE_PRICE({
+      variables: {
+        pid: this.state.pid,
+        price: this.state.price
+      }
+    });
+  };
 
-  handlePriceChange = (id,e) => {
+  handlePriceChange = (id, e) => {
     e.preventDefault();
 
-    console.log("ID",e.target.value,id)
+    console.log("ID", e.target.value, id);
     this.setState({
-      pid:id,
-      price:e.target.value
-    })
+      pid: id,
+      price: e.target.value
+    });
   };
 
   displayProducts() {
@@ -130,7 +146,9 @@ class ProductEdit extends Component {
                         <a href={prod.producturl}>{prod.productname}</a>
                       </p>
                       <p>₹{prod.productprice}</p>
-                      <input onChange={(e)=>this.handlePriceChange(prod.pid, e)}/>
+                      <input
+                        onChange={e => this.handlePriceChange(prod.pid, e)}
+                      />
                       <button onClick={this.handleSubmit}>Submit</button>
                       <button
                         onClick={this.handleOnClick(prod.pid)}
@@ -175,6 +193,9 @@ class ProductEdit extends Component {
     }
   }
   render() {
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/login" />;
+    }
     console.log(this.props);
     return (
       <Content style={{ padding: "0 50px" }}>

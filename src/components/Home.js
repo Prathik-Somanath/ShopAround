@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
-import { Layout, Row, Menu, Col, Icon } from "antd";
+import { Layout, Row, Col, Icon } from "antd";
 import gql from 'graphql-tag';
 import {graphql} from 'react-apollo'
 import { compose } from 'recompose';
-const { Header, Content, Sider, Breadcrumb } = Layout;
-const { SubMenu } = Menu;
+const { Content } = Layout;
 const GET_ALL_PROD = gql`
   query getAllProd {
     products {
@@ -46,6 +45,7 @@ class Home extends Component {
   
   handleOnClick = id => e => {
     e.preventDefault();
+    alert("Item Added to cart!!");
     console.log("Product ID to be added to cart:", id);
     this.props.ADD_CART({
       variables: {

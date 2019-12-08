@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Form, Select, InputNumber, Button, Upload, Icon, Input } from "antd";
+import { Redirect } from "react-router-dom";
+import { Form, Select, InputNumber, Button, Input } from "antd";
 import gql from "graphql-tag";
 import { graphql} from "react-apollo";
 import {compose} from "recompose";
@@ -66,6 +67,20 @@ const ADD_PROD = gql`
 `;
 
 class ProductRegistration extends Component {
+
+  constructor(props){
+    super(props)
+    const  token = localStorage.getItem("vid");
+
+    let loggedIn = true
+    if(token == null){
+      loggedIn = false
+    }
+    this.state = {
+      loggedIn
+    }
+  }
+
   displayBrand() {
     var data = this.props.getall;
     if (data.loading) {
@@ -147,6 +162,9 @@ class ProductRegistration extends Component {
   };
 
   render() {
+    if(this.state.loggedIn === false){
+      return <Redirect to="/login" />;
+    }
     console.log(this.props.data);
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {

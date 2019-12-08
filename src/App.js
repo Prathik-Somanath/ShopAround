@@ -8,6 +8,7 @@ import ProdRegistration from './components/ProductRegistration'
 import Cart from './components/Cart'
 import ProdEdit from './components/ProductEdit'
 import Login from './components/Login'
+import Logout from './components/Logout'
 import Navbar from './components/Navbar'
 import CustomerRegistration from './components/CustomerRegistration'
 import VendorRegistration from './components/VendorRegistration'
@@ -89,6 +90,12 @@ const App = () => {
             path="/login"
             render={() => {
               return <Login />;
+            }}
+          />
+          <Route
+            path="/logout"
+            render={() => {
+              return <Logout />;
             }}
           />
         </Switch>

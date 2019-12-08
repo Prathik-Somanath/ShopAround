@@ -45,6 +45,7 @@ class VendorRegistration extends Component {
 
   render() {
     if (this.state.loggedIn) {
+      alert("You Logged In as Vendor");
       return <Redirect to="/productregistration" />;
     }
     const { getFieldDecorator } = this.props.form;

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
 import { Layout, Row, Menu, Col, Icon } from "antd";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
@@ -52,7 +53,16 @@ const DELETE_PROD = gql`
 class Cart extends Component {
   constructor(props) {
     super(props);
-    this.state = { total_cost: '' };
+    const token = localStorage.getItem("cusid");
+
+    let loggedIn = true;
+    if (token == null) {
+      loggedIn = false;
+    }
+    this.state = { 
+      total_cost: '',
+      loggedIn
+    };
   }
 
   handleOnClick = id => e => {
@@ -150,6 +160,9 @@ class Cart extends Component {
     }
   }
   render() {
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/login" />;
+    }
     console.log(this.props);
     return (
       <Content style={{ padding: "0 50px" }}>

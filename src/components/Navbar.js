@@ -60,12 +60,20 @@ class Navbar extends Component {
               CART
             </Link>
           </Menu.Item>
-          
+          <Menu.Item key="prodedit">
+            <Link to="/prodedit">
+              EDIT
+            </Link>
+          </Menu.Item>
+
           <Menu.Item key="login" style={{ float: "right" }}>
             <Link to="/login">
               <Icon type="heart-o" />
               SIGN IN
             </Link>
+          </Menu.Item>
+          <Menu.Item key="logout" style={{ float: "right" }}>
+            <Link to="/logout">LogOut</Link>
           </Menu.Item>
           {/* <Menu.Item
             key="logout"
