@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import { Layout, Row, Menu, Col, Icon } from "antd";
 import gql from "graphql-tag";
 import { graphql } from "react-apollo";
+import { Link } from 'react-router-dom'
 import { compose } from "recompose";
-const { Header, Content, Sider } = Layout;
+const { Header, Content, Sider, Form, InputNumber, Button } = Layout;
 const { SubMenu } = Menu;
 const GET_ALL_PROD = gql`
   query getAllProd($vid:Int!) {
@@ -45,22 +46,62 @@ const DELETE_PROD = gql`
     }
   }
 `;
-class ProductEdit extends Component {
 
-  handleOnClick = id => e =>{
-      e.preventDefault();
-      console.log("Product ID to be deleted:", id);
-      this.props.DELETE_PROD({
-          variables: {
-              pid: id
-          },
-          refetchQueries: [{query: GET_ALL_PROD}]
-      });
-  }  
+
+const UPDATE_PRICE = gql`
+  mutation($pid: Int!, $price: Int!) {
+    update_products(
+      where: { pid: { _eq: $pid } }
+      _set: { productprice: $price }
+    ) {
+      affected_rows
+      returning {
+        productname
+        productprice
+      }
+    }
+  }
+`;
+
+class ProductEdit extends Component {
+  state = {
+    pid:'',
+    price:''
+  }
+  handleOnClick = id => e => {
+    e.preventDefault();
+    console.log("Product ID to be deleted:", id);
+    this.props.DELETE_PROD({
+      variables: {
+        pid: id
+      },
+      refetchQueries: [{ query: GET_ALL_PROD }]
+    });
+  };
+
+  handleSubmit = ()=>{
+                       this.props.UPDATE_PRICE({
+                       variables: {
+                       pid: this.state.pid,
+                       price: this.state.price
+                       }
+                       });
+                     }
+
+  handlePriceChange = (id,e) => {
+    e.preventDefault();
+
+    console.log("ID",e.target.value,id)
+    this.setState({
+      pid:id,
+      price:e.target.value
+    })
+  };
+
   displayProducts() {
     var data = this.props.getall;
     if (data.loading) {
-      return <div>Loading books...</div>;
+      return <div>Loading ...</div>;
     } else {
       return data.products.map(prod => {
         return (
@@ -89,9 +130,20 @@ class ProductEdit extends Component {
                         <a href={prod.producturl}>{prod.productname}</a>
                       </p>
                       <p>₹{prod.productprice}</p>
-                      <button onClick={ this.handleOnClick(prod.pid)} style={{ float: "right" }}>
+                      <input onChange={(e)=>this.handlePriceChange(prod.pid, e)}/>
+                      <button onClick={this.handleSubmit}>Submit</button>
+                      <button
+                        onClick={this.handleOnClick(prod.pid)}
+                        style={{ float: "right" }}
+                      >
                         <Icon type="delete" />
                       </button>
+                      {/* <Link
+                        to={`/produpdate?pid=${prod.pid}`}
+                        style={{ float: "right" }}
+                      >
+                        <li>EDIT</li>
+                      </Link> */}
                       <small>{prod.vendor.vurl}</small>
                     </div>
                     <nav class="level is-mobile">
@@ -139,6 +191,8 @@ class ProductEdit extends Component {
   }
 }
 
+
+
 export default compose(
   graphql(
     GET_ALL_PROD,
@@ -153,5 +207,6 @@ export default compose(
       }
     }
   ),
+  graphql(UPDATE_PRICE, { name: "UPDATE_PRICE" }),
   graphql(DELETE_PROD, { name: "DELETE_PROD" })
 )(ProductEdit);
