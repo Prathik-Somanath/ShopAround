@@ -3,6 +3,8 @@ Ecommerce website where sellers can show their products and customers can compar
 
 ![](public/image7.png)
 
+![](public/Cart.png)
+
 ![](public/image6.png)
 
 ![](public/image8.png)
